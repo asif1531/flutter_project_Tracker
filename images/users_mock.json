@@ -1,0 +1,65 @@
+{
+  "users": [
+    {
+      "user_name": "asif",
+      "email": "abc@gmail.com",
+      "password": "abcd1234",
+      "permissions": [
+        "write",
+        "read"
+      ]
+    },
+    {
+      "user_name": "Max",
+      "email": "max@gmail.com",
+      "password": "abcd1234"
+    },
+    {
+      "user_name": "Prashant",
+      "email": "prashant@gmail.com",
+      "password": "abcd1234",
+      "permissions": [
+        "read"
+      ]
+    },
+    {
+      "user_name": "admin",
+      "email": "dummy@gmail.com",
+      "password": "abcd1234",
+      "permissions": [
+        "read"
+      ]
+    }
+  ],
+  "projects": [
+    {
+      "name": "project 1",
+      "desc": "Happlabs Tracking",
+      "start_date": "7-Jan-2020",
+      "end_date": "3-Mar-2020",
+      "contributors": {}
+    },
+    {
+      "name": "project 2",
+      "desc": "Project Tracking System",
+      "start_date": "12-Jan-2020",
+      "end_date": "24-Mar-2020"
+    },
+    {
+      "name": "project 3",
+      "desc": "School project management",
+      "start_date": "12-Jan-2020",
+      "end_date": "24-Mar-2020",
+      "updates": [
+        "A work has been done",
+        "B work pending",
+        "C work is pending"
+      ],
+      "to_do": [
+        "to do list 1",
+        "to do lst 2",
+        "to do 3"
+      ]
+    }
+  ]
+}
