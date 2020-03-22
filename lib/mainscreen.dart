@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:happlabs_bms_proj/calender.dart';
 import 'package:happlabs_bms_proj/dashboardhomepage.dart';
+import 'package:happlabs_bms_proj/login.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 //import 'package:happlabs_bms_proj/homescreen.dart';
 
@@ -42,7 +44,6 @@ class _MainDrawerState extends State<MainDrawer> {
                     'Happlabs BMS',
                     style: TextStyle(fontSize: 22, color: Colors.white),
                   ),
-
                 ],
               ),
             ),
@@ -61,7 +62,6 @@ class _MainDrawerState extends State<MainDrawer> {
                 'DashBoard',
                 style: TextStyle(fontSize: 20.0),
               ),
-
             ),
           ),
           InkWell(
@@ -69,7 +69,7 @@ class _MainDrawerState extends State<MainDrawer> {
               Navigator.pop(context);
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) =>CalendarPage()),
+                MaterialPageRoute(builder: (context) => CalendarPage()),
               );
             },
             child: ListTile(
@@ -87,7 +87,15 @@ class _MainDrawerState extends State<MainDrawer> {
               'Logout',
               style: TextStyle(fontSize: 20.0),
             ),
-            onTap: null,
+            onTap: () async {
+              SharedPreferences prefs = await SharedPreferences.getInstance();
+              prefs.remove('email');
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (ctx) => LoginPage(),
+                ),
+              );
+            },
           )
         ],
       ),

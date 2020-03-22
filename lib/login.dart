@@ -5,6 +5,7 @@ import 'package:happlabs_bms_proj/dashboardhomepage.dart';
 import 'dart:convert';
 
 import 'package:happlabs_bms_proj/homescreen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 //import 'package:happlabs_bms_proj/mainscreen.dart';
 //import 'sidebar/sidebar_layout.dart';
 
@@ -37,7 +38,7 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   void readJson() {
-    parseJsonFromAssets('assets/users_mock.json').then((jsonData) {
+    parseJsonFromAssets('assets/users_mock.json').then((jsonData) async {
       // print(jsonData);
       widget.users = jsonData['users'];
       Map foundUser = {};
@@ -47,6 +48,8 @@ class _LoginPageState extends State<LoginPage> {
               user["password"] == passwordFieldController.text,
           orElse: () => print('Invalid User'));
       if (foundUser != null) {
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        prefs.setString('email', foundUser['email']);
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => GridHomePage()),
