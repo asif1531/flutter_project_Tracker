@@ -1,4 +1,6 @@
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:happlabs_bms_proj/dashboardhomepage.dart';
 //import 'package:happlabs_bms_proj/mainscreen.dart';
 import 'constants.dart';
 import 'dart:convert';
@@ -19,6 +21,7 @@ class AddProjectWidget extends State {
   String _myDispoSelection;
 
   String _myBidTypeSelection;
+  String filePath = '';
 
   final String projTypeurl = "${ConstantVars.apiUrl}/projectstype/";
 
@@ -155,29 +158,34 @@ class AddProjectWidget extends State {
       'title': title,
       'Platform': '${ConstantVars.apiUrl}/projectstype/$_myProjSelection/',
       'link': link,
-      'budget': budget,
-      'month': month,
+      'budget': budget.toString(),
+      'month': month.toString(),
       'tier': '${ConstantVars.apiUrl}/projectstier/$_myProjTierSelection/',
       'Disposition':
           '${ConstantVars.apiUrl}/projectsdisposition/$_myDispoSelection/',
       'bidtype': '${ConstantVars.apiUrl}/projectsbid/$_myBidTypeSelection/',
       'Evidence': evidence,
       'BiddingNotes': biddingNotes,
-      'file': '',
       'date': DateTime.now().toIso8601String(),
     };
 
     print(data.toString());
 
     // Starting Web Call with data.
-    var response = await http.post(url,
-        body: json.encode(data), headers: {'Content-Type': 'application/json'});
+    var uri = Uri.parse(url);
+    var request = http.MultipartRequest('POST', uri);
+    request.fields.addAll(data);
+    request.files.add(
+      await http.MultipartFile.fromPath('file', filePath),
+    );
+    var response = await request.send();
 
     // Getting Server response into variable.
-    var message = jsonDecode(response.body);
 
+    var message = await response.stream.bytesToString();
     // If Web call Success than Hide the CircularProgressIndicator.
-    if (response.statusCode == 200) {
+    if (response.statusCode == 201) {
+      message = 'Record created successfully';
       setState(() {
         visible = false;
       });
@@ -193,7 +201,15 @@ class AddProjectWidget extends State {
             FlatButton(
               child: new Text("OK"),
               onPressed: () {
-                Navigator.of(context).pop();
+                if (response.statusCode == 201) {
+                  Navigator.of(context).pushReplacement(
+                    MaterialPageRoute(
+                      builder: (ctx) => GridHomePage(),
+                    ),
+                  );
+                } else {
+                  Navigator.of(context).pop();
+                }
               },
             ),
           ],
@@ -434,18 +450,34 @@ class AddProjectWidget extends State {
                           hintText: 'Evidence'),
                     )),
                 Container(
+                  width: 350,
+                  padding: EdgeInsets.all(10.0),
+                  child: TextField(
+                    controller: biddingNotesController,
+                    autocorrect: true,
+                    decoration: InputDecoration(
+                        labelText: 'Enter Bid Notes',
+                        border: OutlineInputBorder(
+                            borderRadius: const BorderRadius.all(
+                                const Radius.circular(10.0))),
+                        hintText: 'Enter Bid Notes'),
+                  ),
+                ),
+                InkWell(
+                  onTap: () async {
+                    filePath = await FilePicker.getFilePath();
+                    setState(() {});
+                  },
+                  child: Container(
+                    margin: EdgeInsets.symmetric(horizontal: 40, vertical: 10),
+                    padding: EdgeInsets.symmetric(vertical: 20, horizontal: 10),
                     width: 350,
-                    padding: EdgeInsets.all(10.0),
-                    child: TextField(
-                      controller: biddingNotesController,
-                      autocorrect: true,
-                      decoration: InputDecoration(
-                          labelText: 'Enter Bid Notes',
-                          border: OutlineInputBorder(
-                              borderRadius: const BorderRadius.all(
-                                  const Radius.circular(10.0))),
-                          hintText: 'Enter Bid Notes'),
-                    )),
+                    decoration: BoxDecoration(
+                        border: Border.all(color: Colors.black),
+                        borderRadius: BorderRadius.circular(10)),
+                    child: Text(filePath != '' ? '$filePath' : 'Select file'),
+                  ),
+                ),
                 SizedBox(
                   height: 20,
                 ),

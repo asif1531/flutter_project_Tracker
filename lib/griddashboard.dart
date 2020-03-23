@@ -1,15 +1,12 @@
-
-
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:happlabs_bms_proj/jsonpage.dart';
 import 'calender.dart';
 
 class GridDashboard extends StatelessWidget {
-
   List<Items> myList = [
     Items(
-      //page: 'null',
+        //page: 'null',
         title: "Activities",
         subtitle: "Click to view Calender",
         event: "Events",
@@ -49,7 +46,7 @@ class GridDashboard extends StatelessWidget {
   void conditionalNavigation(BuildContext ctx, String title) {
     switch (title) {
       case 'Projects':
-        Navigator.pop(ctx);
+        // Navigator.pop(ctx);
         Navigator.of(ctx).push(
           MaterialPageRoute(builder: (ctx) => JsonPage()),
         );
@@ -67,7 +64,7 @@ class GridDashboard extends StatelessWidget {
         );
         break;
       case 'Downloads':
-        Navigator.pop(ctx);
+        //Navigator.pop(ctx);
         Navigator.of(ctx).push(
           MaterialPageRoute(builder: (ctx) => CalendarPage()),
         );
@@ -98,8 +95,7 @@ class GridDashboard extends StatelessWidget {
           crossAxisCount: 2,
           crossAxisSpacing: 18,
           mainAxisSpacing: 18,
-          children: myList.map((data)
-          {
+          children: myList.map((data) {
             return Card(
               color: Colors.transparent,
               elevation: 5,
@@ -169,6 +165,4 @@ class Items {
   String img;
 
   Items({this.title, this.subtitle, this.event, this.page, this.img});
-
 }
-
