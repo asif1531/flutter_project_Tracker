@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:happlabs_bms_proj/activitytrack.dart';
+import 'package:happlabs_bms_proj/contactus.dart';
+import 'package:happlabs_bms_proj/downloads.dart';
 import 'package:happlabs_bms_proj/jsonpage.dart';
 import 'calender.dart';
 
@@ -7,15 +10,15 @@ class GridDashboard extends StatelessWidget {
   List<Items> myList = [
     Items(
         //page: 'null',
-        title: "Activities",
+        title: "Projects",
         subtitle: "Click to view Calender",
         event: "Events",
-        img: "images/calender.png"),
+        img: "images/projects.jpg"),
     Items(
-      title: "Projects",
+      title: "Downloads",
       subtitle: "Click to view Projects",
       event: "",
-      img: "images/projects.jpg",
+      img: "images/calender.png",
     ),
     Items(
       title: "Activity",
@@ -24,7 +27,7 @@ class GridDashboard extends StatelessWidget {
       img: "images/activity.png",
     ),
     Items(
-      title: "Downloads",
+      title: "CSV",
       subtitle: "Your Downloads",
       event: "",
       img: "images/downloads.png",
@@ -52,7 +55,7 @@ class GridDashboard extends StatelessWidget {
         );
         break;
 
-      case 'Calendar':
+      case 'Downloads':
         Navigator.of(ctx).push(
           MaterialPageRoute(builder: (ctx) => CalendarPage()),
         );
@@ -60,10 +63,10 @@ class GridDashboard extends StatelessWidget {
 
       case 'Activity':
         Navigator.of(ctx).push(
-          MaterialPageRoute(builder: (ctx) => CalendarPage()),
+          MaterialPageRoute(builder: (ctx) => ActivityTrack()),
         );
         break;
-      case 'Downloads':
+      case 'CSV':
         //Navigator.pop(ctx);
         Navigator.of(ctx).push(
           MaterialPageRoute(builder: (ctx) => CalendarPage()),
@@ -76,7 +79,7 @@ class GridDashboard extends StatelessWidget {
         break;
       case 'Contact us':
         Navigator.of(ctx).push(
-          MaterialPageRoute(builder: (ctx) => CalendarPage()),
+          MaterialPageRoute(builder: (ctx) => ContactUs()),
         );
         break;
       default:

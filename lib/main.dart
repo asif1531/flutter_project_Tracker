@@ -4,9 +4,11 @@ import 'package:happlabs_bms_proj/login.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'onboard.dart';
 import 'dashboardhomepage.dart';
+// import 'package:flutter_downloader/flutter_downloader.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  // await FlutterDownloader.initialize();
   SharedPreferences prefs = await SharedPreferences.getInstance();
   String email = prefs.getString('email') ?? null;
   bool isFirstTimeUser = prefs.getBool('isFirstTime') ?? true;

@@ -1,10 +1,12 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:happlabs_bms_proj/dashboardhomepage.dart';
 //import 'package:happlabs_bms_proj/dashboardhomepage.dart';
 import 'dart:convert';
 
-import 'package:happlabs_bms_proj/homescreen.dart';
+//import 'package:happlabs_bms_proj/homescreen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 //import 'package:happlabs_bms_proj/mainscreen.dart';
 //import 'sidebar/sidebar_layout.dart';
@@ -60,6 +62,7 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
+
     final emailField = TextField(
       controller: emailFieldController,
       obscureText: false,

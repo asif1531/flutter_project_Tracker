@@ -1,10 +1,19 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+// import 'package:flutter_downloader/flutter_downloader.dart';
+import 'package:dio/dio.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:file_utils/file_utils.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'dart:async';
+
 //import 'package:url_launcher/url_launcher.dart';
 //import 'package:sidebar_animation/constants.dart';
 ////import 'package:sidebar_animation/constants.dart';
 //import 'package:http/http.dart' as http;
-import 'dart:convert';
+//import 'dart:convert';
 
 class ProjectDataCard extends StatefulWidget {
   final String prjTitle;
@@ -39,6 +48,10 @@ class ProjectDataCard extends StatefulWidget {
 }
 
 class _ProjectDataCardState extends State<ProjectDataCard> {
+  bool downloading = false;
+  var progress = "";
+  var path = "No Data";
+
 //  Map data;
 //  List userData;
 //
@@ -91,6 +104,61 @@ class _ProjectDataCardState extends State<ProjectDataCard> {
 //      throw 'Could not launch $url';
 //    }
 //  }
+  Future<void> downloadFile(String url) async {
+    PermissionStatus storagePermission = await PermissionHandler()
+        .checkPermissionStatus(PermissionGroup.storage);
+    print('First time:' + storagePermission.toString());
+    // print(checkPermission1);
+    if (storagePermission != PermissionStatus.granted) {
+      await PermissionHandler().requestPermissions([PermissionGroup.storage]);
+      storagePermission = await PermissionHandler()
+          .checkPermissionStatus(PermissionGroup.storage);
+      print('second time:' + storagePermission.toString());
+    }
+    if (storagePermission == PermissionStatus.granted) {
+      String dirloc = "";
+      if (Platform.isAndroid) {
+        dirloc = "/sdcard/download/projectManagement/";
+      } else {
+        dirloc = (await getApplicationDocumentsDirectory()).path;
+      }
+      try {
+        FileUtils.mkdir([dirloc]);
+        Dio dio = new Dio();
+        // final taskid = await FlutterDownloader.enqueue(
+        //     url: url,
+        //     savedDir: dirloc,
+        //     showNotification: true,
+        //     openFileFromNotification: true);
+
+        // FlutterDownloader.registerCallback((taskid, status, progress) {
+        //   print(
+        //       'Download task ($taskid) is in status ($status) and process ($progress)');
+        // });
+        await dio.download(url, dirloc + url.split('/').last,
+            onReceiveProgress: (receivedBytes, totalBytes) {
+          setState(() {
+            downloading = true;
+            progress =
+                ((receivedBytes / totalBytes) * 100).toStringAsFixed(0) + "%";
+          });
+        });
+      } catch (e) {
+        print(e);
+      }
+
+      setState(() {
+        downloading = false;
+        progress = "Download Completed.";
+        final snackBar = SnackBar(content: Text('Download completed!'));
+        Scaffold.of(context).showSnackBar(snackBar);
+      });
+    } else {
+      setState(() {
+        progress = "Permission Denied!";
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -143,7 +211,7 @@ class _ProjectDataCardState extends State<ProjectDataCard> {
                         Text(
                       //'Platform: ${widget.prjPlatform}'
                       'Platform :${widget.prjPlatform}',
-                      textAlign: TextAlign.center,
+                      textAlign: TextAlign.left,
                       //.toString(),
                       overflow: TextOverflow.fade,
                       style: TextStyle(
@@ -180,7 +248,7 @@ class _ProjectDataCardState extends State<ProjectDataCard> {
                   Container(
                     height: 60,
                     child: Text(
-                      'Months : ${widget.month}', textAlign: TextAlign.center,
+                      'Months : ${widget.month}', textAlign: TextAlign.left,
                       //.toString(),
                       overflow: TextOverflow.fade,
                       style: TextStyle(
@@ -243,25 +311,48 @@ class _ProjectDataCardState extends State<ProjectDataCard> {
                     margin: EdgeInsets.all(10.0),
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(15.0)),
-                    child: Container(
-                      height: 100,
-                      child: InkWell(
-                          child: Center(
-                            child: new Text(
-                              'File :${widget.file}',
-
-                              //.toString(),
-                              overflow: TextOverflow.fade,
-                              style: TextStyle(
-                                color: Colors.blue,
-                                fontSize: 18,
+                    child: downloading
+                        ? Container(
+                            height: 120.0,
+                            width: 200.0,
+                            child: Card(
+                              color: Colors.black,
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: <Widget>[
+                                  CircularProgressIndicator(),
+                                  SizedBox(
+                                    height: 10.0,
+                                  ),
+                                  Text(
+                                    'Downloading File: $progress',
+                                    style: TextStyle(color: Colors.white),
+                                  ),
+                                ],
                               ),
                             ),
+                          )
+                        : Container(
+                            height: 100,
+                            child: InkWell(
+                                child: Center(
+                                  child: new Text(
+                                    'File :${widget.file}',
+
+                                    //.toString(),
+                                    overflow: TextOverflow.fade,
+                                    style: TextStyle(
+                                      color: Colors.blue,
+                                      fontSize: 18,
+                                    ),
+                                  ),
+                                ),
+                                onTap: () => {
+                                      downloadFile(widget.file),
+                                    }
+                                //_launchURL(),
+                                ),
                           ),
-                          onTap: () => {}
-                          //_launchURL(),
-                          ),
-                    ),
                   ),
                   SizedBox(
                     height: 10,

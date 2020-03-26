@@ -1,18 +1,24 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:happlabs_bms_proj/dashboardhomepage.dart';
-//import 'package:happlabs_bms_proj/mainscreen.dart';
 import 'constants.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-//import 'package:file_picker/file_picker.dart';
+import 'package:form_field_validator/form_field_validator.dart';
+// import 'package:dio/dio.dart';
+// import 'package:path_provider/path_provider.dart';
 
 class AddProject extends StatefulWidget {
   AddProjectWidget createState() => AddProjectWidget();
 }
 
 class AddProjectWidget extends State {
+
+  final requiredValidator = RequiredValidator(errorText: 'this field is required');
+
 //  final _formKey = GlobalKey<FormState>();
+
+//  bool _btnEnabled = false;
 
   String _myProjSelection;
 
@@ -21,6 +27,7 @@ class AddProjectWidget extends State {
   String _myDispoSelection;
 
   String _myBidTypeSelection;
+
   String filePath = '';
 
   final String projTypeurl = "${ConstantVars.apiUrl}/projectstype/";
@@ -116,6 +123,7 @@ class AddProjectWidget extends State {
 
   // Getting value from TextField widget.
   final titleController = TextEditingController();
+  bool _validate = false;
   //final platformController = TextEditingController();
   final linkController = TextEditingController();
   final budgetController = TextEditingController();
@@ -244,10 +252,12 @@ class AddProjectWidget extends State {
                 Container(
                     width: 350,
                     padding: EdgeInsets.all(10.0),
-                    child: TextField(
-//                            validator: (value) {
-//                            if (value.isEmpty) {
-//                              return 'Please enter some text';
+                    child: TextFormField(
+                      validator: (requiredValidator),
+
+//                            validator: (titleController) {
+//                            if (titleController.isEmpty) {
+//                              return 'Please enter Title';
 //                            }
 //                            return null;
 //                          },
@@ -256,6 +266,8 @@ class AddProjectWidget extends State {
                       autocorrect: true,
                       decoration: InputDecoration(
                           labelText: 'Enter the title',
+                          //errorText: _validate ? 'value needed' : null,
+                          //errorText: _validate ? 'Value Can\'t Be Empty' : null,
                           border: OutlineInputBorder(
                             borderRadius: const BorderRadius.all(
                                 const Radius.circular(10.0)),
@@ -280,7 +292,7 @@ class AddProjectWidget extends State {
                       ),
                       items: Projtypedata.map((item) {
                         return new DropdownMenuItem(
-                          child: new Text(item['Platform']),
+                          child: Center(child: new Text(item['Platform'])),
                           value: item['id'].toString(),
                         );
                       }).toList(),
@@ -310,7 +322,14 @@ class AddProjectWidget extends State {
                 Container(
                     width: 350,
                     padding: EdgeInsets.all(10.0),
-                    child: TextField(
+                    child: TextFormField(
+                      autovalidate: true,
+
+                      keyboardType: TextInputType.number,
+//                       validator:(input){
+//                        final isDigitOnly=int.tryParse(input);
+//                        return  isDigitOnly == null?'':null;
+//                        },
                       controller: budgetController,
                       autocorrect: true,
                       decoration: InputDecoration(
@@ -323,7 +342,14 @@ class AddProjectWidget extends State {
                 Container(
                     width: 350,
                     padding: EdgeInsets.all(10.0),
-                    child: TextField(
+                    child: TextFormField(
+                      keyboardType: TextInputType.number,
+                      validator: (input) {
+                        final isDigitOnly = int.tryParse(input);
+                        return isDigitOnly == null
+                            ? 'Input Needs in Number only'
+                            : null;
+                      },
                       controller: monthController,
                       autocorrect: true,
                       decoration: InputDecoration(
@@ -350,7 +376,7 @@ class AddProjectWidget extends State {
                       ),
                       items: ProjTierData.map((item) {
                         return new DropdownMenuItem(
-                          child: new Text(item['tier']),
+                          child: Center(child: new Text(item['tier'])),
                           value: item['id'].toString(),
                         );
                       }).toList(),
@@ -382,7 +408,7 @@ class AddProjectWidget extends State {
                       ),
                       items: ProjDispoData.map((item) {
                         return new DropdownMenuItem(
-                          child: new Text(item['Disposition']),
+                          child: Center(child: new Text(item['Disposition'])),
                           value: item['id'].toString(),
                         );
                       }).toList(),
@@ -416,7 +442,7 @@ class AddProjectWidget extends State {
                       ),
                       items: ProjBidTypedata.map((item) {
                         return new DropdownMenuItem(
-                          child: new Text(item['bidtype']),
+                          child: Center(child: new Text(item['bidtype'])),
                           value: item['id'].toString(),
                         );
                       }).toList(),
@@ -487,6 +513,8 @@ class AddProjectWidget extends State {
                   textColor: Colors.white,
                   padding: EdgeInsets.fromLTRB(8, 8, 8, 8),
                   child: Text('Click Here To Submit Data The Details'),
+
+                  //titleController.text.isEmpty ? _validate = true : _validate = false;
                 ),
                 Visibility(
                     visible: visible,
