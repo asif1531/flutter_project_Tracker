@@ -57,7 +57,7 @@ class GridDashboard extends StatelessWidget {
 
       case 'Downloads':
         Navigator.of(ctx).push(
-          MaterialPageRoute(builder: (ctx) => CalendarPage()),
+          MaterialPageRoute(builder: (ctx) => DownloadsPage()),
         );
         break;
 

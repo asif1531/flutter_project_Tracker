@@ -13,6 +13,16 @@
         android:name="io.flutter.app.FlutterApplication"
         android:label="happlabs_bms_proj"
         android:icon="@mipmap/ic_launcher">
+        <provider
+            android:authorities="${applicationId}.fileProvider"
+            android:name="androidx.core.content.FileProvider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/filepaths"
+                />
+        </provider>
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"

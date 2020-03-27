@@ -5,8 +5,6 @@ import 'constants.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:form_field_validator/form_field_validator.dart';
-// import 'package:dio/dio.dart';
-// import 'package:path_provider/path_provider.dart';
 
 class AddProject extends StatefulWidget {
   AddProjectWidget createState() => AddProjectWidget();
