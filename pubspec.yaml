@@ -14,7 +14,7 @@ description: A new Flutter application.
 version: 1.0.0+1
 
 environment:
-  sdk: ">=2.1.0 <3.0.0"
+  sdk: ">=2.2.2 <3.0.0"
 
 dependencies:
   flutter:
@@ -32,6 +32,8 @@ dependencies:
   url_launcher: ^5.1.2
   form_field_validator: ^1.0.1
   open_file: ^3.0.1
+  csv: ^4.0.3
+  flutter_appavailability: "^0.0.21"
 
 
 dev_dependencies:
@@ -62,6 +64,7 @@ flutter:
      - images/onboarding1.png
      - images/onboarding2.png
      - images/onboarding3.png
+     - images/csv.jpg
      - users_mock.json
 
   # An image asset can refer to one or more resolution-specific "variants", see

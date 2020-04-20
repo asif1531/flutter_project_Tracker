@@ -1,24 +1,30 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:happlabs_bms_proj/dashboardhomepage.dart';
+import 'package:happlabs_bms_proj/jsonpage.dart';
 import 'constants.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:form_field_validator/form_field_validator.dart';
 
 class AddProject extends StatefulWidget {
-  AddProjectWidget createState() => AddProjectWidget();
+  final Map<String, dynamic> projData;
+  AddProject({this.projData});
+  AddProjectWidget createState() => AddProjectWidget(projData: projData);
 }
 
 class AddProjectWidget extends State {
-
-  final requiredValidator = RequiredValidator(errorText: 'this field is required');
+  final Map<String, dynamic> projData;
+  AddProjectWidget({this.projData});
+  final requiredValidator =
+      RequiredValidator(errorText: 'this field is required');
 
 //  final _formKey = GlobalKey<FormState>();
 
 //  bool _btnEnabled = false;
 
   String _myProjSelection;
+  bool addProj = true;
 
   String _myProjTierSelection;
 
@@ -51,6 +57,26 @@ class AddProjectWidget extends State {
     this.getDispoData();
     this.getTierData();
     this.getBidData();
+    this.preparedata();
+  }
+
+  preparedata() {
+    if (this.projData != null) {
+      this.url = '${ConstantVars.apiUrl}/projectscreate/${projData['id']}/';
+      this.addProj = false;
+      print(this.projData.toString());
+      this._myProjSelection = projData['Platform']['id'].toString();
+      this._myBidTypeSelection = projData['bidtype']['id'].toString();
+      this._myProjTierSelection = projData['tier']['id'].toString();
+      this._myDispoSelection = projData['Disposition']['id'].toString();
+      this.titleController.text = projData['title'];
+      this.monthController.text = projData['month'].toString();
+      this.linkController.text = projData['link'];
+      // this.filePath = projData['file'];
+      this.evidenceController.text = projData['Evidence'];
+      this.budgetController.text = projData['budget'].toString();
+      this.biddingNotesController.text = projData['BiddingNotes'];
+    }
   }
 
   Future<String> getSWData() async {
@@ -137,6 +163,7 @@ class AddProjectWidget extends State {
 
   // Boolean variable for CircularProgressIndicator.
   bool visible = false;
+  var url = '${ConstantVars.apiUrl}/projectscreate/';
 
   Future webCall() async {
     // Showing CircularProgressIndicator using State.
@@ -155,9 +182,6 @@ class AddProjectWidget extends State {
     //String bidtype = bidTypeController.text;
     String evidence = evidenceController.text;
     String biddingNotes = biddingNotesController.text;
-
-    // API URL
-    var url = '${ConstantVars.apiUrl}/projects/';
 
     // Store all data with Param Name.
     var data = {
@@ -179,11 +203,19 @@ class AddProjectWidget extends State {
 
     // Starting Web Call with data.
     var uri = Uri.parse(url);
-    var request = http.MultipartRequest('POST', uri);
+    var request;
+    if (this.addProj) {
+      request = http.MultipartRequest('POST', uri);
+    } else {
+      request = http.MultipartRequest('PUT', uri);
+    }
     request.fields.addAll(data);
-    request.files.add(
-      await http.MultipartFile.fromPath('file', filePath),
-    );
+    if (this.addProj) {
+      request.files.add(
+        await http.MultipartFile.fromPath('file', filePath),
+      );
+    }
+
     var response = await request.send();
 
     // Getting Server response into variable.
@@ -192,6 +224,11 @@ class AddProjectWidget extends State {
     // If Web call Success than Hide the CircularProgressIndicator.
     if (response.statusCode == 201) {
       message = 'Record created successfully';
+      setState(() {
+        visible = false;
+      });
+    } else if (response.statusCode == 200 && !this.addProj) {
+      message = 'Record updated successfully';
       setState(() {
         visible = false;
       });
@@ -208,11 +245,9 @@ class AddProjectWidget extends State {
               child: new Text("OK"),
               onPressed: () {
                 if (response.statusCode == 201) {
-                  Navigator.of(context).pushReplacement(
-                    MaterialPageRoute(
-                      builder: (ctx) => GridHomePage(),
-                    ),
-                  );
+                  Navigator.of(context).pushReplacementNamed(JsonPage.id);
+                } else if (response.statusCode == 200 && !this.addProj) {
+                  Navigator.of(context).pushReplacementNamed(JsonPage.id);
                 } else {
                   Navigator.of(context).pop();
                 }
@@ -227,197 +262,196 @@ class AddProjectWidget extends State {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Colors.white,
-        appBar: AppBar(
-          title: Text(
-            "HappLabs",
-            textAlign: TextAlign.center,
-          ),
-          backgroundColor: Colors.blue,
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        title: Text(
+          "HappLabs",
+          textAlign: TextAlign.center,
         ),
-        //drawer: MainDrawer(),
-        body: Center(
-          child: SingleChildScrollView(
-              child: Center(
-            child: Column(
-              children: <Widget>[
-                Padding(
-                    padding: const EdgeInsets.all(12.0),
-                    child: Center(
-                      child: Text('Fill All the Information in Form',
-                          style: TextStyle(fontSize: 24, color: Colors.red)),
-                    )),
-                Container(
-                    width: 350,
-                    padding: EdgeInsets.all(10.0),
-                    child: TextFormField(
-                      validator: (requiredValidator),
-
+        backgroundColor: Colors.blue,
+      ),
+      //drawer: MainDrawer(),
+      body: Center(
+        child: SingleChildScrollView(
+            child: Center(
+          child: Column(
+            children: <Widget>[
+              Padding(
+                  padding: const EdgeInsets.all(12.0),
+                  child: Center(
+                    child: Text('Fill All the Information in Form',
+                        style: TextStyle(fontSize: 24, color: Colors.red)),
+                  )),
+              Container(
+                  width: 350,
+                  padding: EdgeInsets.all(10.0),
+                  child: TextFormField(
+                    validator: (requiredValidator),
 //                            validator: (titleController) {
 //                            if (titleController.isEmpty) {
 //                              return 'Please enter Title';
 //                            }
 //                            return null;
 //                          },
-
-                      controller: titleController,
-                      autocorrect: true,
-                      decoration: InputDecoration(
-                          labelText: 'Enter the title',
-                          //errorText: _validate ? 'value needed' : null,
-                          //errorText: _validate ? 'Value Can\'t Be Empty' : null,
-                          border: OutlineInputBorder(
-                            borderRadius: const BorderRadius.all(
-                                const Radius.circular(10.0)),
-                          ),
-                          fillColor: Colors.red,
-                          hintText: 'Enter Title Here'),
-                    )),
-                Container(
-                  width: 350,
-                  padding: EdgeInsets.all(10.0),
-                  child: Center(
-                    child: new DropdownButton(
-                      isExpanded: true,
-                      hint: Center(
-                        child: Text(
-                          "Select Platform",
-                          style: TextStyle(
-                            fontSize: 20,
-                            color: Colors.grey,
-                          ),
+                    controller: titleController,
+                    autocorrect: true,
+                    decoration: InputDecoration(
+                        labelText: 'Enter the title',
+                        //errorText: _validate ? 'value needed' : null,
+                        //errorText: _validate ? 'Value Can\'t Be Empty' : null,
+                        border: OutlineInputBorder(
+                          borderRadius: const BorderRadius.all(
+                              const Radius.circular(10.0)),
+                        ),
+                        fillColor: Colors.red,
+                        hintText: 'Enter Title Here'),
+                  )),
+              Container(
+                width: 350,
+                padding: EdgeInsets.all(10.0),
+                child: Center(
+                  child: new DropdownButton(
+                    isExpanded: true,
+                    hint: Center(
+                      child: Text(
+                        "Select Platform",
+                        style: TextStyle(
+                          fontSize: 20,
+                          color: Colors.grey,
                         ),
                       ),
-                      items: Projtypedata.map((item) {
-                        return new DropdownMenuItem(
-                          child: Center(child: new Text(item['Platform'])),
-                          value: item['id'].toString(),
-                        );
-                      }).toList(),
-                      onChanged: (newVal) {
-                        setState(() {
-                          _myProjSelection = newVal;
-                        });
-                      },
-                      value: _myProjSelection,
                     ),
+                    items: Projtypedata.map((item) {
+                      return new DropdownMenuItem(
+                        child: Center(child: new Text(item['Platform'])),
+                        value: item['id'].toString(),
+                      );
+                    }).toList(),
+                    onChanged: (newVal) {
+                      setState(() {
+                        _myProjSelection = newVal;
+                      });
+                    },
+                    value: _myProjSelection,
                   ),
-//
                 ),
-                Container(
-                    width: 350,
-                    padding: EdgeInsets.all(10.0),
-                    child: TextField(
-                      controller: linkController,
-                      autocorrect: true,
-                      decoration: InputDecoration(
-                          labelText: 'Reference Link',
-                          border: OutlineInputBorder(
-                              borderRadius: const BorderRadius.all(
-                                  const Radius.circular(10.0))),
-                          hintText: 'Link Here'),
-                    )),
-                Container(
-                    width: 350,
-                    padding: EdgeInsets.all(10.0),
-                    child: TextFormField(
-                      autovalidate: true,
+//
+              ),
+              Container(
+                  width: 350,
+                  padding: EdgeInsets.all(10.0),
+                  child: TextField(
+                    controller: linkController,
+                    autocorrect: true,
+                    decoration: InputDecoration(
+                        labelText: 'Reference Link',
+                        border: OutlineInputBorder(
+                            borderRadius: const BorderRadius.all(
+                                const Radius.circular(10.0))),
+                        hintText: 'Link Here'),
+                  )),
+              Container(
+                  width: 350,
+                  padding: EdgeInsets.all(10.0),
+                  child: TextFormField(
+                    autovalidate: true,
 
-                      keyboardType: TextInputType.number,
+                    keyboardType: TextInputType.number,
 //                       validator:(input){
 //                        final isDigitOnly=int.tryParse(input);
 //                        return  isDigitOnly == null?'':null;
 //                        },
-                      controller: budgetController,
-                      autocorrect: true,
-                      decoration: InputDecoration(
-                          labelText: 'Specify Your Budget',
-                          border: OutlineInputBorder(
-                              borderRadius: const BorderRadius.all(
-                                  const Radius.circular(10.0))),
-                          hintText: ' Your Budget '),
-                    )),
-                Container(
-                    width: 350,
-                    padding: EdgeInsets.all(10.0),
-                    child: TextFormField(
-                      keyboardType: TextInputType.number,
-                      validator: (input) {
-                        final isDigitOnly = int.tryParse(input);
-                        return isDigitOnly == null
-                            ? 'Input Needs in Number only'
-                            : null;
-                      },
-                      controller: monthController,
-                      autocorrect: true,
-                      decoration: InputDecoration(
-                          labelText: 'No of Months',
-                          border: OutlineInputBorder(
-                              borderRadius: const BorderRadius.all(
-                                  const Radius.circular(10.0))),
-                          hintText: 'Specify Months Here!'),
-                    )),
-                Container(
+                    controller: budgetController,
+                    autocorrect: true,
+                    decoration: InputDecoration(
+                        labelText: 'Specify Your Budget',
+                        border: OutlineInputBorder(
+                            borderRadius: const BorderRadius.all(
+                                const Radius.circular(10.0))),
+                        hintText: ' Your Budget '),
+                  )),
+              Container(
                   width: 350,
                   padding: EdgeInsets.all(10.0),
-                  child: Center(
-                    child: new DropdownButton(
-                      isExpanded: true,
-                      hint: Center(
-                        child: Text(
-                          "Select Tier",
-                          style: TextStyle(
-                            fontSize: 20,
-                            color: Colors.grey,
-                          ),
+                  child: TextFormField(
+                    keyboardType: TextInputType.number,
+                    validator: (input) {
+                      final isDigitOnly = int.tryParse(input);
+                      return isDigitOnly == null
+                          ? 'Input Needs in Number only'
+                          : null;
+                    },
+                    controller: monthController,
+                    autocorrect: true,
+                    decoration: InputDecoration(
+                        labelText: 'No of Months',
+                        border: OutlineInputBorder(
+                            borderRadius: const BorderRadius.all(
+                                const Radius.circular(10.0))),
+                        hintText: 'Specify Months Here!'),
+                  )),
+              Container(
+                width: 350,
+                padding: EdgeInsets.all(10.0),
+                child: Center(
+                  child: new DropdownButton(
+                    isExpanded: true,
+                    hint: Center(
+                      child: Text(
+                        "Select Tier",
+                        style: TextStyle(
+                          fontSize: 20,
+                          color: Colors.grey,
                         ),
                       ),
-                      items: ProjTierData.map((item) {
-                        return new DropdownMenuItem(
-                          child: Center(child: new Text(item['tier'])),
-                          value: item['id'].toString(),
-                        );
-                      }).toList(),
-                      onChanged: (newVal) {
-                        setState(() {
-                          _myProjTierSelection = newVal;
-                        });
-                      },
-                      value: _myProjTierSelection,
                     ),
+                    items: ProjTierData.map((item) {
+                      return new DropdownMenuItem(
+                        child: Center(child: new Text(item['tier'])),
+                        value: item['id'].toString(),
+                      );
+                    }).toList(),
+                    onChanged: (newVal) {
+                      setState(() {
+                        print(newVal.toString());
+                        _myProjTierSelection = newVal;
+                      });
+                    },
+                    value: _myProjTierSelection,
                   ),
+                ),
 //                        TextField(
 //                          controller: tierController,
 //                          autocorrect: true,
 //                          decoration: InputDecoration(hintText: 'Select Tier Here'),
 //                        )
-                ),
-                Container(
-                  width: 350,
-                  padding: EdgeInsets.all(10.0),
-                  child: Center(
-                    child: new DropdownButton(
-                      isExpanded: true,
-                      hint: Center(
-                        child: Text(
-                          "Select dispo",
-                          style: TextStyle(fontSize: 20, color: Colors.grey),
-                        ),
+              ),
+              Container(
+                width: 350,
+                padding: EdgeInsets.all(10.0),
+                child: Center(
+                  child: new DropdownButton(
+                    isExpanded: true,
+                    hint: Center(
+                      child: Text(
+                        "Select dispo",
+                        style: TextStyle(fontSize: 20, color: Colors.grey),
                       ),
-                      items: ProjDispoData.map((item) {
-                        return new DropdownMenuItem(
-                          child: Center(child: new Text(item['Disposition'])),
-                          value: item['id'].toString(),
-                        );
-                      }).toList(),
-                      onChanged: (newVal) {
-                        setState(() {
-                          _myDispoSelection = newVal;
-                        });
-                      },
-                      value: _myDispoSelection,
                     ),
+                    items: ProjDispoData.map((item) {
+                      return new DropdownMenuItem(
+                        child: Center(child: new Text(item['Disposition'])),
+                        value: item['id'].toString(),
+                      );
+                    }).toList(),
+                    onChanged: (newVal) {
+                      setState(() {
+                        _myDispoSelection = newVal;
+                      });
+                    },
+                    value: _myDispoSelection,
                   ),
+                ),
 
 //                    TextField(
 //                      controller: dispositionController,
@@ -425,33 +459,33 @@ class AddProjectWidget extends State {
 //                      decoration:
 //                          InputDecoration(hintText: 'Select Disposition Here'),
 //                    )
-                ),
-                Container(
-                  width: 350,
-                  padding: EdgeInsets.all(10.0),
-                  child: Center(
-                    child: new DropdownButton(
-                      isExpanded: true,
-                      hint: Center(
-                        child: Text(
-                          "Select BidType",
-                          style: TextStyle(fontSize: 20, color: Colors.grey),
-                        ),
+              ),
+              Container(
+                width: 350,
+                padding: EdgeInsets.all(10.0),
+                child: Center(
+                  child: new DropdownButton(
+                    isExpanded: true,
+                    hint: Center(
+                      child: Text(
+                        "Select BidType",
+                        style: TextStyle(fontSize: 20, color: Colors.grey),
                       ),
-                      items: ProjBidTypedata.map((item) {
-                        return new DropdownMenuItem(
-                          child: Center(child: new Text(item['bidtype'])),
-                          value: item['id'].toString(),
-                        );
-                      }).toList(),
-                      onChanged: (newVal) {
-                        setState(() {
-                          _myBidTypeSelection = newVal;
-                        });
-                      },
-                      value: _myBidTypeSelection,
                     ),
+                    items: ProjBidTypedata.map((item) {
+                      return new DropdownMenuItem(
+                        child: Center(child: new Text(item['bidtype'])),
+                        value: item['id'].toString(),
+                      );
+                    }).toList(),
+                    onChanged: (newVal) {
+                      setState(() {
+                        _myBidTypeSelection = newVal;
+                      });
+                    },
+                    value: _myBidTypeSelection,
                   ),
+                ),
 
 //                        TextField(
 //                          controller: bidTypeController,
@@ -459,34 +493,35 @@ class AddProjectWidget extends State {
 //                          decoration:
 //                          InputDecoration(hintText: 'Select Bidtype Here'),
 //                        )
-                ),
-                Container(
-                    width: 350,
-                    padding: EdgeInsets.all(10.0),
-                    child: TextField(
-                      controller: evidenceController,
-                      autocorrect: true,
-                      decoration: InputDecoration(
-                          labelText: 'Evidence',
-                          border: OutlineInputBorder(
-                              borderRadius: const BorderRadius.all(
-                                  const Radius.circular(10.0))),
-                          hintText: 'Evidence'),
-                    )),
-                Container(
+              ),
+              Container(
                   width: 350,
                   padding: EdgeInsets.all(10.0),
                   child: TextField(
-                    controller: biddingNotesController,
+                    controller: evidenceController,
                     autocorrect: true,
                     decoration: InputDecoration(
-                        labelText: 'Enter Bid Notes',
+                        labelText: 'Evidence',
                         border: OutlineInputBorder(
                             borderRadius: const BorderRadius.all(
                                 const Radius.circular(10.0))),
-                        hintText: 'Enter Bid Notes'),
-                  ),
+                        hintText: 'Evidence'),
+                  )),
+              Container(
+                width: 350,
+                padding: EdgeInsets.all(10.0),
+                child: TextField(
+                  controller: biddingNotesController,
+                  autocorrect: true,
+                  decoration: InputDecoration(
+                      labelText: 'Enter Bid Notes',
+                      border: OutlineInputBorder(
+                          borderRadius: const BorderRadius.all(
+                              const Radius.circular(10.0))),
+                      hintText: 'Enter Bid Notes'),
                 ),
+              ),
+              if (this.addProj)
                 InkWell(
                   onTap: () async {
                     filePath = await FilePicker.getFilePath();
@@ -502,26 +537,27 @@ class AddProjectWidget extends State {
                     child: Text(filePath != '' ? '$filePath' : 'Select file'),
                   ),
                 ),
-                SizedBox(
-                  height: 20,
-                ),
-                RaisedButton(
-                  onPressed: webCall,
-                  color: Colors.blueAccent,
-                  textColor: Colors.white,
-                  padding: EdgeInsets.fromLTRB(8, 8, 8, 8),
-                  child: Text('Click Here To Submit Data The Details'),
+              SizedBox(
+                height: 20,
+              ),
+              RaisedButton(
+                onPressed: webCall,
+                color: Colors.blueAccent,
+                textColor: Colors.white,
+                padding: EdgeInsets.fromLTRB(8, 8, 8, 8),
+                child: Text('Click Here To Submit Data The Details'),
 
-                  //titleController.text.isEmpty ? _validate = true : _validate = false;
-                ),
-                Visibility(
-                    visible: visible,
-                    child: Container(
-                        margin: EdgeInsets.only(bottom: 30),
-                        child: CircularProgressIndicator())),
-              ],
-            ),
-          )),
-        ));
+                //titleController.text.isEmpty ? _validate = true : _validate = false;
+              ),
+              Visibility(
+                  visible: visible,
+                  child: Container(
+                      margin: EdgeInsets.only(bottom: 30),
+                      child: CircularProgressIndicator())),
+            ],
+          ),
+        )),
+      ),
+    );
   }
 }

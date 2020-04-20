@@ -14,12 +14,12 @@ import 'dart:async';
 import 'package:file_utils/file_utils.dart';
 import 'package:open_file/open_file.dart';
 
-class DownloadsPage extends StatefulWidget {
+class CsvPage extends StatefulWidget {
   @override
-  _DownloadsPageState createState() => _DownloadsPageState();
+  _CsvPageState createState() => _CsvPageState();
 }
 
-class _DownloadsPageState extends State<DownloadsPage> {
+class _CsvPageState extends State<CsvPage> {
   List<dynamic> files = [];
   String _openResult = 'Unknown';
   Future<void> downloadedFile() async {
@@ -29,7 +29,7 @@ class _DownloadsPageState extends State<DownloadsPage> {
     if (storagePermission == PermissionStatus.granted) {
       String dirloc = '';
       if (Platform.isAndroid) {
-        dirloc = "/sdcard/download/projectManagement/";
+        dirloc = "/sdcard/download/projDetails/";
       } else {
         dirloc = (await getApplicationDocumentsDirectory()).path;
       }

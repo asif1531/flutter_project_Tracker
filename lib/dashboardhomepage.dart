@@ -22,11 +22,14 @@ import 'griddashboard.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class GridHomePage extends StatefulWidget {
+
+  static String id = 'dashboard_page';
   @override
   _GridHomePageState createState() => _GridHomePageState();
 }
 
 class _GridHomePageState extends State<GridHomePage> {
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

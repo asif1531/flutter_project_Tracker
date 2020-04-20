@@ -5,6 +5,8 @@ import 'package:happlabs_bms_proj/login.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class OnboardingPage extends StatefulWidget {
+  static String id = 'onboard_page';
+
   OnboardingPage({Key key}) : super(key: key);
 
   _OnboardingPageState createState() => _OnboardingPageState();

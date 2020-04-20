@@ -128,13 +128,11 @@
 //  }
 //}
 
-
 import 'package:flutter/material.dart';
 import 'package:happlabs_bms_proj/widgets/activity_track_card.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'constants.dart';
-
 
 class ActivityTrack extends StatefulWidget {
   List<dynamic> projects = [];
@@ -153,9 +151,9 @@ class _ActivityTrack extends State<ActivityTrack> {
     } else {
       widget.projects = widget.orgProjects
           .where((project) => project['title']
-          .toString()
-          .toLowerCase()
-          .contains(searchTxt.toLowerCase()))
+              .toString()
+              .toLowerCase()
+              .contains(searchTxt.toLowerCase()))
           .toList();
     }
     setState(() {});
@@ -176,7 +174,7 @@ class _ActivityTrack extends State<ActivityTrack> {
   //   });
   // }
   void getProjectList() async {
-    final response = await http.get('${ConstantVars.apiUrl}/projects');
+    final response = await http.get('${ConstantVars.apiUrl}/projectslist');
     final decodedResponse = json.decode(response.body);
     widget.projects = decodedResponse['results'];
     widget.orgProjects = decodedResponse['results'];
@@ -252,7 +250,6 @@ class _ActivityTrack extends State<ActivityTrack> {
           ],
         ),
       ),
-
     );
   }
 }

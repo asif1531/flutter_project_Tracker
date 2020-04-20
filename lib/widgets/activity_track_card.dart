@@ -80,10 +80,9 @@
 //  }
 //}
 
-
-
 import 'package:flutter/material.dart';
 import 'package:happlabs_bms_proj/projdetails.dart';
+
 class ProjectTrackCard extends StatelessWidget {
   final Map<String, dynamic> projData;
 
@@ -114,8 +113,8 @@ class ProjectTrackCard extends StatelessWidget {
                   ),
                   width: double.infinity,
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                        vertical: 5, horizontal: 10),
+                    padding:
+                        const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
                     child: Text(
                       projData['title'],
                       style: TextStyle(
@@ -130,7 +129,7 @@ class ProjectTrackCard extends StatelessWidget {
                 height: 100,
                 child: Center(
                   child: Text(
-                    projData['Disposition'],
+                    projData['Disposition']['Disposition'],
                     //.toString(),
                     overflow: TextOverflow.fade,
                     style: TextStyle(

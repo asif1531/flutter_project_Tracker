@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:happlabs_bms_proj/calender.dart';
+import 'package:happlabs_bms_proj/csv_page.dart';
+
 import 'package:happlabs_bms_proj/dashboardhomepage.dart';
 import 'package:happlabs_bms_proj/login.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -50,11 +51,11 @@ class _MainDrawerState extends State<MainDrawer> {
           ),
           InkWell(
             onTap: () {
-              Navigator.pop(context);
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => GridHomePage()),
-              );
+              if (ModalRoute.of(context).settings.name != GridHomePage.id) {
+                Navigator.pushNamed(context, GridHomePage.id);
+              } else {
+                Navigator.pop(context);
+              }
             },
             child: ListTile(
               leading: Icon(Icons.dashboard),
@@ -69,7 +70,7 @@ class _MainDrawerState extends State<MainDrawer> {
               Navigator.pop(context);
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => CalendarPage()),
+                MaterialPageRoute(builder: (context) => CsvPage()),
               );
             },
             child: ListTile(
@@ -90,11 +91,7 @@ class _MainDrawerState extends State<MainDrawer> {
             onTap: () async {
               SharedPreferences prefs = await SharedPreferences.getInstance();
               prefs.remove('email');
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (ctx) => LoginPage(),
-                ),
-              );
+              Navigator.pushReplacementNamed(context, LoginPage.id);
             },
           )
         ],

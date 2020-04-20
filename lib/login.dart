@@ -12,6 +12,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 //import 'sidebar/sidebar_layout.dart';
 
 class LoginPage extends StatefulWidget {
+  
+
+  static String id = 'login_screen';
   LoginPage({Key key, this.title}) : super(key: key);
 
   final String title;
@@ -52,10 +55,7 @@ class _LoginPageState extends State<LoginPage> {
       if (foundUser != null) {
         SharedPreferences prefs = await SharedPreferences.getInstance();
         prefs.setString('email', foundUser['email']);
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => GridHomePage()),
-        );
+        Navigator.pushReplacementNamed(context, GridHomePage.id);
       }
     });
   }

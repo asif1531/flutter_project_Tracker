@@ -9,6 +9,7 @@ class ProjectDetailsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print(projData.toString());
     return Scaffold(
       backgroundColor: Colors.cyan[50],
       appBar: new AppBar(
@@ -19,19 +20,21 @@ class ProjectDetailsPage extends StatelessWidget {
       ),
       body: Container(
           child: ProjectDataCard(
-            prjTitle: projData['title'],
-            prjPlatform: projData['Platform'],
-            prjlink: projData['link'],
-            prjbudget: projData['budget'],
-            month: projData['month'],
-            tier: projData['tier'],
-            disposition: projData['Disposition'],
-            bidtype: projData['bidtype'],
-            evidence: projData['Evidence'],
-            biddingnotes: projData['BiddingNotes'],
-            file: projData['file'],
-            date: projData['date'],
-          )),
+        projdata: projData,
+        prjId: projData['id'],
+        prjTitle: projData['title'],
+        prjPlatform: projData['Platform']['Platform'],
+        prjlink: projData['link'],
+        prjbudget: projData['budget'].toString(),
+        month: projData['month'],
+        tier: projData['tier']['tier'],
+        disposition: projData['Disposition']['Disposition'],
+        bidtype: projData['bidtype']['bidtype'],
+        evidence: projData['Evidence'],
+        biddingnotes: projData['BiddingNotes'],
+        file: projData['file'].toString(),
+        date: projData['date'],
+      )),
     );
   }
 }

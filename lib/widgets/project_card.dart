@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:happlabs_bms_proj/projdetails.dart';
+
 class ProjectCard extends StatelessWidget {
   final Map<String, dynamic> projData;
 
@@ -9,6 +10,7 @@ class ProjectCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // print(projData.toString());
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: InkWell(
@@ -34,7 +36,8 @@ class ProjectCard extends StatelessWidget {
                     alignment: Alignment.center,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(20),
-                      color: Colors.purple[100],
+                      color: Colors.grey.shade300,
+                      //color: Colors.purple[100],
                     ),
                     width: double.infinity,
                     child: Padding(
@@ -50,23 +53,46 @@ class ProjectCard extends StatelessWidget {
                 SizedBox(
                   height: 10,
                 ),
+                Center(
+                  child: Container(
+                    //height: 100,
+                    child: Text(
+                      projData['BiddingNotes'],
+                      //.toString(),
+                      overflow: TextOverflow.fade,
+                      style: TextStyle(
+                        fontSize: 16,
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  height: 20.0,
+                ),
+                Divider(
+                  thickness: 2,
+                ),
                 Container(
-                  height: 100,
-                  child: Text(
-                    projData['BiddingNotes'],
-                    //.toString(),
-                    overflow: TextOverflow.fade,
-                    style: TextStyle(
-                      fontSize: 16,
+                  //height: 100,
+                  child: Align(
+                    alignment: Alignment.bottomCenter,
+                    child: Text('Budget : ${
+                        projData['budget']
+                    }',
+                      //.toString(),
+                      overflow: TextOverflow.fade,
+                      style: TextStyle(
+                        fontSize: 16,
+                      ),
                     ),
                   ),
                 ),
                 SizedBox(
                   height: 10,
                 ),
-//                Divider(
-//                  thickness: 2,
-//                ),
+                Divider(
+                  thickness: 2,
+                ),
                 Align(
                   child: Text(
                     'Dead Line : ${projData['date']}',

@@ -4,21 +4,21 @@ import 'package:happlabs_bms_proj/activitytrack.dart';
 import 'package:happlabs_bms_proj/contactus.dart';
 import 'package:happlabs_bms_proj/downloads.dart';
 import 'package:happlabs_bms_proj/jsonpage.dart';
-import 'calender.dart';
+import 'csv_page.dart';
 
 class GridDashboard extends StatelessWidget {
   List<Items> myList = [
     Items(
         //page: 'null',
         title: "Projects",
-        subtitle: "Click to view Calender",
-        event: "Events",
+        subtitle: "Click to view Projects",
+        event: "",
         img: "images/projects.jpg"),
     Items(
       title: "Downloads",
-      subtitle: "Click to view Projects",
+      subtitle: "Click to view Downloads",
       event: "",
-      img: "images/calender.png",
+      img: "images/downloads.png",
     ),
     Items(
       title: "Activity",
@@ -28,9 +28,9 @@ class GridDashboard extends StatelessWidget {
     ),
     Items(
       title: "CSV",
-      subtitle: "Your Downloads",
+      subtitle: "Click to view Project CSV",
       event: "",
-      img: "images/downloads.png",
+      img: "images/csv.jpg",
     ),
     Items(
       title: "Mails",
@@ -69,12 +69,12 @@ class GridDashboard extends StatelessWidget {
       case 'CSV':
         //Navigator.pop(ctx);
         Navigator.of(ctx).push(
-          MaterialPageRoute(builder: (ctx) => CalendarPage()),
+          MaterialPageRoute(builder: (ctx) => CsvPage()),
         );
         break;
       case 'Mails':
         Navigator.of(ctx).push(
-          MaterialPageRoute(builder: (ctx) => CalendarPage()),
+          MaterialPageRoute(builder: (ctx) => CsvPage()),
         );
         break;
       case 'Contact us':

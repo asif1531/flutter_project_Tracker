@@ -4,6 +4,7 @@ import 'package:happlabs_bms_proj/login.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'onboard.dart';
 import 'dashboardhomepage.dart';
+import 'jsonpage.dart';
 // import 'package:flutter_downloader/flutter_downloader.dart';
 
 void main() async {
@@ -29,15 +30,25 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        debugShowCheckedModeBanner: false,
-        theme: ThemeData(
-            scaffoldBackgroundColor: Colors.grey.shade100,
-            primaryColor: Colors.black),
-        home: isFirstTimeUser
-            ? OnboardingPage()
-            : currentUserEmail != null ? GridHomePage() : LoginPage()
-        // replace home with above code to enable onboard and login flow
-        // home: GridHomePage(),
-        );
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+          scaffoldBackgroundColor: Colors.grey.shade100,
+          primaryColor: Colors.black),
+      home: isFirstTimeUser
+          ? OnboardingPage()
+          : currentUserEmail != null ? GridHomePage() : LoginPage(),
+      // replace home with above code to enable onboard and login flow
+      // home: GridHomePage(),
+      initialRoute:  isFirstTimeUser
+          ? OnboardingPage.id
+          : currentUserEmail != null ? GridHomePage.id : LoginPage.id,
+      routes: {
+        OnboardingPage.id: (context) => OnboardingPage(),
+        LoginPage.id: (context) => LoginPage(),
+        GridHomePage.id: (context) => GridHomePage(),
+        JsonPage.id:(context)=>JsonPage()
+
+      },
+    );
   }
 }
